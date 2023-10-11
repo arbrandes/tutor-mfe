@@ -19,6 +19,14 @@ instructions, because git commits are used to generate release notes:
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-17.0.0'></a>
+## v17.0.0 (2023-12-04)
+
+- 💥Upgrade to Quince.
+	- [Bugfix] Remove the trailing slash from auto-generated ``PUBLIC_PATH`` env vars for MFEs in order to be consistent with LMS/Studio config, and so that we don't have to strip it off on the JavaScript side after the React Router 6 upgrade. (by @ormsbee)
+	- [Improvement] Added Makefile and test action to repository and formatted code with Black and isort. (by @CodeWithEmad)
+	- [Feature] Add support for the Learner Dashboard MFE. (by @arbrandes)
+
 <a id='changelog-16.1.2'></a>
 ## v16.1.2 (2023-11-06)
 

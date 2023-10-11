@@ -40,8 +40,9 @@ def get_github_refs_path(name: str) -> str:
         str: A string URL to the Github API, pointing to heads if version_suffix is set, tags otherwise.
 
     """
-
-    return f"https://api.github.com/repos/{name}/git/refs/{'heads' if __version_suffix__ else 'tags'}"
+    # TODO remove this once we upgrade to quince
+    return f"https://api.github.com/repos/{name}/git/refs/heads"
+    # return f"https://api.github.com/repos/{name}/git/refs/{'heads' if __version_suffix__ else 'tags'}"
 
 
 CORE_MFE_APPS: dict[str, MFE_ATTRS_TYPE] = {
