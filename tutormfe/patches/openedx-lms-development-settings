@@ -31,7 +31,7 @@ MFE_CONFIG["DISABLE_ENTERPRISE_LOGIN"] = True
 {% endif %}
 
 {% if get_mfe("account") %}
-ACCOUNT_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:{{ get_mfe("account")["port"] }}/account"
+ACCOUNT_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:{{ get_mfe("account")["port"] }}/account/"
 MFE_CONFIG["ACCOUNT_SETTINGS_URL"] = ACCOUNT_MICROFRONTEND_URL
 {% endif %}
 
@@ -50,7 +50,7 @@ WRITABLE_GRADEBOOK_URL = "http://{{ MFE_HOST }}:{{ get_mfe("gradebook")["port"] 
 {% endif %}
 
 {% if get_mfe("learner-dashboard") %}
-LEARNER_HOME_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:{{ get_mfe("learner-dashboard")["port"] }}/learner-dashboard"
+LEARNER_HOME_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:{{ get_mfe("learner-dashboard")["port"] }}/learner-dashboard/"
 {% endif %}
 
 {% if get_mfe("learning") %}
@@ -69,7 +69,6 @@ MFE_CONFIG["ACCOUNT_PROFILE_URL"] = "http://{{ MFE_HOST }}:{{ get_mfe("profile")
 
 {% if get_mfe("communications") %}
 COMMUNICATIONS_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:{{ get_mfe("communications")["port"] }}/communications"
->>>>>>> master
 MFE_CONFIG["SCHEDULE_EMAIL_SECTION"] = True
 {% endif %}
 
