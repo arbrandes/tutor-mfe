@@ -11,6 +11,14 @@ function addPlugins(config, slot_name, plugins) {
   config.pluginSlots[slot_name].plugins.push(...plugins);
 }
 
+function addExternalScripts(config, scripts) {
+  if (!config.externalScripts) {
+    config.externalScripts = [];
+  }
+
+  config.externalScripts.push(...scripts);
+}
+
 {{- patch("mfe-env-config-buildtime-definitions") }}
 
 async function setConfig () {
@@ -44,6 +52,18 @@ async function setConfig () {
 
     {{- patch("mfe-env-config-runtime-final") }}
   } catch (err) { console.error("env.config.jsx failed to apply: ", err);}
+
+  {%- for script_config in iter_external_scripts("all") %}
+  addExternalScripts(config, [{{ script_config }}]);
+  {%- endfor %}
+
+  {%- for app_name, _ in iter_mfes() %}
+  if (process.env.APP_ID == '{{ app_name }}') {
+    {%- for script_config in iter_external_scripts(app_name) %}
+    addExternalScripts(config, [{{ script_config }}]);
+    {%- endfor %}
+  }
+  {%- endfor %}
 
   return config;
 }

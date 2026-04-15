@@ -13,7 +13,7 @@ from tutor.hooks import priorities
 from tutor.types import Config, get_typed
 
 from .__about__ import __version__
-from .hooks import MFE_APPS, MFE_ATTRS_TYPE, PLUGIN_SLOTS
+from .hooks import EXTERNAL_SCRIPTS, MFE_APPS, MFE_ATTRS_TYPE, PLUGIN_SLOTS
 
 # Handle version suffix in main mode, just like tutor core
 if __version_suffix__:
@@ -125,6 +125,14 @@ def get_plugin_slots(mfe_name: str) -> list[tuple[str, str]]:
     return [i[-2:] for i in PLUGIN_SLOTS.iterate() if i[0] == mfe_name]
 
 
+@tutor_hooks.lru_cache
+def get_external_scripts(mfe_name: str) -> list[str]:
+    """
+    This function is cached for performance.
+    """
+    return [i[-1] for i in EXTERNAL_SCRIPTS.iterate() if i[0] == mfe_name]
+
+
 def iter_mfes() -> t.Iterable[tuple[str, MFE_ATTRS_TYPE]]:
     """
     Yield:
@@ -143,6 +151,15 @@ def iter_plugin_slots(mfe_name: str) -> t.Iterable[tuple[str, str]]:
     yield from get_plugin_slots(mfe_name)
 
 
+def iter_external_scripts(mfe_name: str) -> t.Iterable[str]:
+    """
+    Yield:
+
+        (script_config)
+    """
+    yield from get_external_scripts(mfe_name)
+
+
 def is_mfe_enabled(mfe_name: str) -> bool:
     return mfe_name in get_mfes()
 
@@ -157,6 +174,7 @@ tutor_hooks.Filters.ENV_TEMPLATE_VARIABLES.add_items(
         ("get_mfe", get_mfe),
         ("iter_mfes", iter_mfes),
         ("iter_plugin_slots", iter_plugin_slots),
+        ("iter_external_scripts", iter_external_scripts),
         ("is_mfe_enabled", is_mfe_enabled),
         ("MFEMountData", MFEMountData),
     ]
