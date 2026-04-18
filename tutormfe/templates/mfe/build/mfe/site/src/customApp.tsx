@@ -1,5 +1,5 @@
 import { App } from '@openedx/frontend-base';
-import { addSlot } from './utils';
+import { addScript, addSlot } from './utils';
 
 {{- patch("mfe-site-custom-app-imports") }}
 
@@ -11,6 +11,14 @@ const customApp: App = {
 
 {%- for slot_operation in iter_frontend_slots() %}
 addSlot(customApp, {{ slot_operation }});
+{%- endfor %}
+
+{%- for script_loader in iter_external_scripts("site") %}
+addScript(customApp, {{ script_loader }});
+{%- endfor %}
+
+{%- for script_loader in iter_external_scripts("all") %}
+addScript(customApp, {{ script_loader }});
 {%- endfor %}
 
 {{- patch("mfe-site-custom-app-final") }}

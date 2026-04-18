@@ -510,9 +510,15 @@ Refer to the `patch catalog <#template-patch-catalog>`_ below for more details.
 Configuring External Scripts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-External scripts are a frontend-platform feature that allows script loaders to be configured via ``env.config.jsx``. A loader is a JavaScript class with a ``constructor({ config })`` and a ``loadScript()`` method. This plugin provides the ``EXTERNAL_SCRIPTS`` hook so that Tutor plugins can register loaders for MFEs without resorting to patches.
+External scripts are a feature of both frontend-platform (for legacy MFEs, via ``env.config.jsx``) and frontend-base (for the site, via ``customApp``) that allows script loaders to run when an app boots. A loader is a JavaScript class with a ``constructor({ config })`` and a ``loadScript()`` method. This plugin provides the ``EXTERNAL_SCRIPTS`` hook so that Tutor plugins can register loaders for either target without resorting to patches.
 
-The hook works similarly to ``PLUGIN_SLOTS``. Each item is a tuple of ``(mfe_name, loader_class)``, where ``mfe_name`` is either ``"all"`` (to apply to every MFE) or the name of a specific MFE, and ``loader_class`` is the name of a loader class that will be added to the ``externalScripts`` config array. Frontend-platform instantiates the class at runtime and passes the MFE's runtime config to its constructor.
+The hook works similarly to ``PLUGIN_SLOTS``. Each item is a tuple of ``(target, loader_class)``, where ``target`` is one of:
+
+- the name of a specific MFE (applies to that MFE only),
+- ``"site"`` (applies only to the frontend-base site),
+- ``"all"`` (applies to every legacy MFE and the site).
+
+``loader_class`` is the name of a loader class. The framework instantiates it at runtime and passes the app's runtime config to its constructor.
 
 For instance, to load a `CookieYes <https://www.cookieyes.com/>`_ consent banner across all MFEs, define a loader directly in ``env.config.jsx``:
 
@@ -580,7 +586,46 @@ You can also target a specific MFE. For example, to load a custom script only on
         ),
     ])
 
-Note that if no external scripts are configured, the ``externalScripts`` key is not set in the config at all, so any MFE-level defaults are preserved.
+Note that if no external scripts are configured, the ``externalScripts`` key is not set in the MFE config at all, so any MFE-level defaults are preserved.
+
+To register a loader on the frontend-base site (targets ``"site"`` or ``"all"``), define or import the class via the ``mfe-site-custom-app-definitions`` or ``mfe-site-custom-app-imports`` patches instead of their ``mfe-env-config-buildtime-*`` equivalents. For example, to run a loader that reads from the site's runtime configuration:
+
+.. code-block:: python
+
+    from tutormfe.hooks import EXTERNAL_SCRIPTS
+    from tutor import hooks
+
+    hooks.Filters.ENV_PATCHES.add_item(
+        (
+            "mfe-site-custom-app-definitions",
+            """
+    class ThirdPartyScriptLoader {
+      constructor({ config }) {
+        this.siteId = config.THIRD_PARTY_SITE_ID;
+      }
+
+      loadScript() {
+        if (!this.siteId) {
+          return;
+        }
+        const script = document.createElement('script');
+        script.id = 'third-party-script';
+        script.src = `https://cdn.example.com/client_data/${this.siteId}/script.js`;
+        document.head.appendChild(script);
+      }
+    }
+    """,
+        )
+    )
+
+    EXTERNAL_SCRIPTS.add_items([
+        (
+            "site",
+            "ThirdPartyScriptLoader",
+        ),
+    ])
+
+The constructor receives ``{ config }``, which is the ``customApp`` runtime configuration. You can inject values into it via the site config (for example, through ``commonAppConfig``) or via the ``runtimeConfigJsonUrl`` endpoint.
 
 Hosting extra static files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1342,7 +1387,7 @@ File changed: ``tutormfe/templates/mfe/build/mfe/site/src/site.scss``
 mfe-site-custom-app-imports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add static imports for use in the site's ``customApp``. Use this to import components that will be registered as slot plugins.
+Add static ES6 imports for use in the site's ``customApp``.
 
 File changed: ``tutormfe/templates/mfe/build/mfe/site/src/customApp.tsx``
 
@@ -1356,7 +1401,7 @@ File changed: ``tutormfe/templates/mfe/build/mfe/site/src/customApp.tsx``
 mfe-site-custom-app-final
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add arbitrary code to the site's ``customApp``, such as slot plugin registrations. Components and declarations imported or defined via ``mfe-site-custom-app-imports`` or ``mfe-site-custom-app-definitions`` can be referenced here.
+Add arbitrary code to the site's ``customApp``, such as slot plugin or external script registrations. Components and loader classes imported or defined via ``mfe-site-custom-app-imports`` or ``mfe-site-custom-app-definitions`` can be referenced here.
 
 File changed: ``tutormfe/templates/mfe/build/mfe/site/src/customApp.tsx``
 
