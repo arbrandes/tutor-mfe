@@ -22,8 +22,6 @@ import { notificationsApp } from '@openedx/frontend-app-notifications';
 {{ patch("mfe-site-config-imports-production") }}
 
 import '@openedx/frontend-base/shell/style';
-import '@edx/brand/core.min.css';
-import '@edx/brand/light.min.css';
 
 const siteConfig: SiteConfig = {
   siteId: 'tutor-site',
