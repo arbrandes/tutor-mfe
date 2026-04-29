@@ -29,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "@edx/brand": "npm:@openedx/brand-openedx@latest",
+    "@edx/brand": "npm:@openedx/brand-openedx@^1.2.3",
 {%- for app_name, app in iter_frontend_apps() if app.get("npm_package") %}
     "{{ app['npm_package'] }}": "{{ app['npm_version'] }}",
 {%- endfor %}
