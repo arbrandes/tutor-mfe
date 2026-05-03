@@ -1,7 +1,8 @@
 // TODO(legacy-mfe-removal): this entire file goes away. frontend-base apps
 // configure themselves via site.config.build.tsx / site.config.dev.tsx and
 // customApp.tsx under templates/mfe/build/mfe/site/.
-{{- patch("mfe-env-config-buildtime-imports") }}
+
+{{ patch("mfe-env-config-buildtime-imports") }}
 
 function addPlugins(config, slot_name, plugins) {
   if (slot_name in config.pluginSlots === false) {
