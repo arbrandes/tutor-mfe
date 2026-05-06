@@ -25,6 +25,7 @@ MFE_CONFIG = {
 
 FRONTEND_SITE_CONFIG = {
     "baseUrl": "http://{{ MFE_HOST }}:{{ MFE_SITE_PORT }}",
+    "cmsBaseUrl": "http://{{ CMS_HOST }}:8001",
     "lmsBaseUrl": "http://{{ LMS_HOST }}:8000",
     "loginUrl": "http://{{ LMS_HOST }}:8000/login",
     "logoutUrl": "http://{{ LMS_HOST }}:8000/logout",
