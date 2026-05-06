@@ -18,6 +18,22 @@ import { instructorDashboardApp } from '@openedx/frontend-app-instructor-dashboa
 import { notificationsApp } from '@openedx/frontend-app-notifications';
 {% endif %}
 
+{% if get_frontend_compat_mfes() %}
+import {
+  createLegacyPluginApp,
+  defaultRouteMap,
+  defaultSlotMap,
+  defaultWidgetMap,
+} from '@openedx/frontend-base-compat';
+{%- for mfe in iter_frontend_compat_mfes() %}
+import {{ camelize_mfe_name(mfe) }}EnvConfig from './src/env.config.{{ mfe }}.jsx';
+{%- endfor %}
+
+const routeMap = { ...defaultRouteMap, ...{{ get_frontend_route_compat_map() | tojson }} };
+const slotMap = { ...defaultSlotMap, ...{{ get_frontend_slot_compat_map() | tojson }} };
+const widgetMap = { ...defaultWidgetMap, ...{{ get_frontend_widget_compat_map() | tojson }} };
+{% endif %}
+
 {{ patch("mfe-site-config-imports") }}
 {{ patch("mfe-site-config-imports-development") }}
 
@@ -61,6 +77,19 @@ addApp(siteConfig, instructorDashboardApp);
 {% if get_frontend_app("notifications") %}
 addApp(siteConfig, notificationsApp);
 {% endif %}
+
+{%- for mfe in iter_frontend_compat_mfes() %}
+addApp(siteConfig, createLegacyPluginApp({
+  appId: 'io.edly.frontend.app.compat.{{ camelize_mfe_name(mfe) }}',
+  envConfig: {{ camelize_mfe_name(mfe) }}EnvConfig,
+  {%- if mfe != "all" %}
+  mfeId: '{{ mfe }}',
+  {%- endif %}
+  routeMap,
+  slotMap,
+  widgetMap,
+}));
+{%- endfor %}
 
 {{ patch("mfe-site-config") }}
 {{ patch("mfe-site-config-development") }}
