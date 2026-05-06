@@ -45,6 +45,7 @@ const siteConfig: SiteConfig = {
   siteId: 'tutor-site',
   siteName: {{ PLATFORM_NAME | tojson }},
   baseUrl: '{{ "https" if ENABLE_HTTPS else "http" }}://{{ MFE_HOST }}:{{ MFE_SITE_PORT }}',
+  cmsBaseUrl: '{{ "https" if ENABLE_HTTPS else "http" }}://{{ CMS_HOST }}:8001',
   lmsBaseUrl: '{{ "https" if ENABLE_HTTPS else "http" }}://{{ LMS_HOST }}:8000',
   loginUrl: '{{ "https" if ENABLE_HTTPS else "http" }}://{{ LMS_HOST }}:8000/login',
   logoutUrl: '{{ "https" if ENABLE_HTTPS else "http" }}://{{ LMS_HOST }}:8000/logout',
